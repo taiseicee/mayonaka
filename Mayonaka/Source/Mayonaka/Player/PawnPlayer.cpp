@@ -13,13 +13,12 @@
 APawnPlayer::APawnPlayer() {
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Player"));
 	CapsuleCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
 	Flipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
 	SpringArmCamera = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Spring Arm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	
-	CapsuleCollider->SetupAttachment(RootComponent);
+	RootComponent = CapsuleCollider;
 	Flipbook->SetupAttachment(RootComponent);
 	SpringArmCamera->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArmCamera);
@@ -64,7 +63,9 @@ void APawnPlayer::Move(float DeltaTime) {
 	Velocity.Y = FMath::FInterpTo(Velocity.Y, DesiredVelocity.Y, DeltaTime, MaxSpeedChange);
 
 	FVector Displacement = Velocity * DeltaTime;
-	AddActorWorldOffset(Displacement, true);
+	FHitResult* OutSweepHitResult = new FHitResult();
+	AddActorWorldOffset(Displacement, true, OutSweepHitResult, ETeleportType::ResetPhysics);
+	if (OutSweepHitResult->bBlockingHit) Velocity = FVector::ZeroVector;
 }
 
 void APawnPlayer::HandleRunState(const FInputActionValue& Value) {
