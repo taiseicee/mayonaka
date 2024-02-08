@@ -46,6 +46,9 @@ void APawnPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleInputMove);
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleRunState);
+		EnhancedInputComponent->BindAction(HarmonizeFireAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeFire);
+		EnhancedInputComponent->BindAction(HarmonizeGrassAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeGrass);
+		EnhancedInputComponent->BindAction(HarmonizeWaterAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeWater);
 	}
 }
 
@@ -72,3 +75,7 @@ void APawnPlayer::HandleRunState(const FInputActionValue& Value) {
 	const bool IsRunning = Value.Get<bool>();
 	MaxSpeed = IsRunning ? MaxRunSpeed : MaxWalkSpeed;
 }
+
+void APawnPlayer::HandleHarmonizeFire(const FInputActionValue& Value) { Element = HarmonizedElement::Fire; UE_LOG(LogTemp, Warning, TEXT("Fire")); }
+void APawnPlayer::HandleHarmonizeGrass(const FInputActionValue& Value) { Element = HarmonizedElement::Grass; UE_LOG(LogTemp, Warning, TEXT("Grass")); }
+void APawnPlayer::HandleHarmonizeWater(const FInputActionValue& Value) { Element = HarmonizedElement::Water; UE_LOG(LogTemp, Warning, TEXT("Water")); }

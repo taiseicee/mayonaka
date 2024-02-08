@@ -33,10 +33,18 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	class UInputMappingContext* MappingContextPlayer;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	class UInputAction* MoveAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	class UInputAction* RunAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	class UInputAction* HarmonizeFireAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	class UInputAction* HarmonizeGrassAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	class UInputAction* HarmonizeWaterAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
 	float MaxWalkSpeed = 100.f;
@@ -52,5 +60,17 @@ private:
 	void HandleInputMove(const FInputActionValue& Value);
 	void HandleRunState(const FInputActionValue& Value);
 
+	void HandleHarmonizeFire(const FInputActionValue& Value);
+	void HandleHarmonizeGrass(const FInputActionValue& Value);
+	void HandleHarmonizeWater(const FInputActionValue& Value);
+
 	void Move(float DeltaTime);
+
+	enum HarmonizedElement {
+		Fire,
+		Grass,
+		Water
+	};
+
+	HarmonizedElement Element = HarmonizedElement::Fire;
 };
