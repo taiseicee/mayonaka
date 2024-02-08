@@ -109,7 +109,8 @@ void APawnPlayer::FireAttack() {
 	);
 
 	FVector FireSpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
-	GetWorld()->SpawnActor<AProjectileFire>(ProjectileFireClass, FireSpawnLocation, FRotator::ZeroRotator);
+	FRotator FireSpawnRotation = (OutHitResult.ImpactPoint - FireSpawnLocation).Rotation();
+	GetWorld()->SpawnActor<AProjectileFire>(ProjectileFireClass, FireSpawnLocation, FireSpawnRotation);
 
 	CanAttackFire = false;
 	GetWorldTimerManager().SetTimer(TimerHandleFireRate, this, &APawnPlayer::EnableAttackFire, AttackRateFire, false);
