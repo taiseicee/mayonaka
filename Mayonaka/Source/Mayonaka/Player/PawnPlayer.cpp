@@ -47,9 +47,7 @@ void APawnPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 }
 
 void APawnPlayer::HandleInputMove(const FInputActionValue& Value) {
-	const bool CurrentValue = Value.Get<bool>();
-	if (CurrentValue) {
-		UE_LOG(LogTemp, Warning, TEXT("IA_Move Triggered"));
-	}
+	const FVector2D InputVector = Value.Get<FVector2D>();
+	UE_LOG(LogTemp, Warning, TEXT("Input %s"), *InputVector.ToString());
 }
 
