@@ -70,6 +70,8 @@ private:
 	void HandleHarmonizeGrass(const FInputActionValue& Value);
 	void HandleHarmonizeWater(const FInputActionValue& Value);
 
+	void FireAttack();
+
 	void Move(float DeltaTime);
 
 	enum HarmonizedElement {
@@ -79,4 +81,11 @@ private:
 	};
 
 	HarmonizedElement Element = HarmonizedElement::Fire;
+
+	APlayerController* PlayerController;
+
+	FTimerHandle TimerHandleFireRate;
+	float AttackRateFire = 1.f;
+	bool CanAttackFire = true;
+	void EnableAttackFire();
 };

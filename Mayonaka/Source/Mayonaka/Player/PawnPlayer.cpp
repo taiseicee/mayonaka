@@ -9,6 +9,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "TimerManager.h"
+
+#include "DrawDebugHelpers.h"
 
 APawnPlayer::APawnPlayer() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -27,10 +30,12 @@ APawnPlayer::APawnPlayer() {
 void APawnPlayer::BeginPlay() {
 	Super::BeginPlay();
 	
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController())) {
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())) {
-			Subsystem->AddMappingContext(MappingContextPlayer, 0);
-		}
+
+	// If PlayerController is null, its likely that the pawn is not possessed
+	verify((PlayerController = Cast<APlayerController>(GetController())) != nullptr);
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())) {
+		Subsystem->AddMappingContext(MappingContextPlayer, 0);
 	}
 
 	MaxSpeed = MaxWalkSpeed;
@@ -80,7 +85,7 @@ void APawnPlayer::HandleRunState(const FInputActionValue& Value) {
 void APawnPlayer::HandleAttack(const FInputActionValue& Value) {
 	switch (Element) {
 		case HarmonizedElement::Fire:
-			UE_LOG(LogTemp, Warning, TEXT("Attack > Fire"));
+			FireAttack();
 			break;
 		case HarmonizedElement::Grass:
 			UE_LOG(LogTemp, Warning, TEXT("Attack > Grass"));
@@ -91,6 +96,30 @@ void APawnPlayer::HandleAttack(const FInputActionValue& Value) {
 	}
 }
 
+void APawnPlayer::FireAttack() {
+	if (!CanAttackFire) return;
+	UE_LOG(LogTemp, Warning, TEXT("Attack > Fire"));
+	FHitResult OutHitResult;
+	PlayerController->GetHitResultUnderCursor(
+		ECollisionChannel::ECC_Visibility,
+		false,
+		OutHitResult
+	);
+	DrawDebugSphere(
+		GetWorld(),
+		OutHitResult.ImpactPoint,
+		25.f,
+		12,
+		FColor::Red,
+		false,
+		15.f
+	);
+	CanAttackFire = false;
+	GetWorldTimerManager().SetTimer(TimerHandleFireRate, this, &APawnPlayer::EnableAttackFire, AttackRateFire, false);
+}
+
 void APawnPlayer::HandleHarmonizeFire(const FInputActionValue& Value) { Element = HarmonizedElement::Fire; }
 void APawnPlayer::HandleHarmonizeGrass(const FInputActionValue& Value) { Element = HarmonizedElement::Grass; }
 void APawnPlayer::HandleHarmonizeWater(const FInputActionValue& Value) { Element = HarmonizedElement::Water; }
+
+void APawnPlayer::EnableAttackFire() { CanAttackFire = true; }
