@@ -32,6 +32,8 @@ private:
 	class USpringArmComponent* SpringArmCamera;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
 	class UCameraComponent* Camera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+	class USceneComponent* ProjectileSpawnPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	class UInputMappingContext* MappingContextPlayer;
@@ -85,7 +87,11 @@ private:
 	APlayerController* PlayerController;
 
 	FTimerHandle TimerHandleFireRate;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
 	float AttackRateFire = 1.f;
 	bool CanAttackFire = true;
 	void EnableAttackFire();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat", meta=(AllowPrivateAccess="true"))
+	TSubclassOf<class AProjectileFire> ProjectileFireClass;
 };

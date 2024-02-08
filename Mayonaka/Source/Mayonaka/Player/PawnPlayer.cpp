@@ -9,9 +9,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "../DamageSources/ProjectileFire.h"
 #include "TimerManager.h"
-
-#include "DrawDebugHelpers.h"
 
 APawnPlayer::APawnPlayer() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -20,11 +19,14 @@ APawnPlayer::APawnPlayer() {
 	Flipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
 	SpringArmCamera = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Spring Arm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
 	
 	RootComponent = CapsuleCollider;
 	Flipbook->SetupAttachment(RootComponent);
+	ProjectileSpawnPoint->SetupAttachment(Flipbook);
 	SpringArmCamera->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArmCamera);
+
 }
 
 void APawnPlayer::BeginPlay() {
@@ -105,15 +107,10 @@ void APawnPlayer::FireAttack() {
 		false,
 		OutHitResult
 	);
-	DrawDebugSphere(
-		GetWorld(),
-		OutHitResult.ImpactPoint,
-		25.f,
-		12,
-		FColor::Red,
-		false,
-		15.f
-	);
+
+	FVector FireSpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
+	GetWorld()->SpawnActor<AProjectileFire>(ProjectileFireClass, FireSpawnLocation, FRotator::ZeroRotator);
+
 	CanAttackFire = false;
 	GetWorldTimerManager().SetTimer(TimerHandleFireRate, this, &APawnPlayer::EnableAttackFire, AttackRateFire, false);
 }
