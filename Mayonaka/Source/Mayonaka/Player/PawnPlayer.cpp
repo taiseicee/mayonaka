@@ -13,12 +13,13 @@
 APawnPlayer::APawnPlayer() {
 	PrimaryActorTick.bCanEverTick = true;
 
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Player"));
 	CapsuleCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
 	Flipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
 	SpringArmCamera = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Spring Arm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-
-	RootComponent = CapsuleCollider;
+	
+	CapsuleCollider->SetupAttachment(RootComponent);
 	Flipbook->SetupAttachment(RootComponent);
 	SpringArmCamera->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArmCamera);
@@ -36,7 +37,7 @@ void APawnPlayer::BeginPlay() {
 
 void APawnPlayer::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
+	Walk(DeltaTime);
 }
 
 void APawnPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
@@ -47,7 +48,19 @@ void APawnPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 }
 
 void APawnPlayer::HandleInputMove(const FInputActionValue& Value) {
-	const FVector2D InputVector = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Warning, TEXT("Input %s"), *InputVector.ToString());
+
+	const FVector2D Input = Value.Get<FVector2D>();
+	InputMove = (new FVector(Input.X, Input.Y, 0.f))->GetClampedToMaxSize(1.f);
+	UE_LOG(LogTemp, Warning, TEXT("Input %s"), *InputMove.ToString());
 }
 
+void APawnPlayer::Walk(float DeltaTime) {
+	FVector DesiredVelocity = InputMove * MaxWalkSpeed;
+	float MaxSpeedChange = DeltaTime * MaxAcceleration;
+
+	Velocity.X = FMath::FInterpTo(Velocity.X, DesiredVelocity.X, DeltaTime, MaxSpeedChange);
+	Velocity.Y = FMath::FInterpTo(Velocity.Y, DesiredVelocity.Y, DeltaTime, MaxSpeedChange);
+
+	FVector Displacement = Velocity * DeltaTime;
+	AddActorWorldOffset(Displacement, true);
+}
