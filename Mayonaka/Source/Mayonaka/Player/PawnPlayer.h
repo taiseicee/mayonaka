@@ -35,15 +35,22 @@ private:
 	class UInputMappingContext* MappingContextPlayer;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	class UInputAction* MoveAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	class UInputAction* RunAction;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
 	float MaxWalkSpeed = 100.f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
-	float MaxAcceleration = 200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float MaxRunSpeed = 200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
+	float MaxAcceleration = 240.f;
 
 	FVector Velocity = FVector::ZeroVector;
 	FVector InputMove = FVector::ZeroVector;
+	float MaxSpeed = 0.f;
 
 	void HandleInputMove(const FInputActionValue& Value);
-	void Walk(float DeltaTime);
+	void HandleRunState(const FInputActionValue& Value);
+
+	void Move(float DeltaTime);
 };

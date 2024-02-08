@@ -33,29 +33,31 @@ void APawnPlayer::BeginPlay() {
 			Subsystem->AddMappingContext(MappingContextPlayer, 0);
 		}
 	}
+
+	MaxSpeed = MaxWalkSpeed;
 }
 
 void APawnPlayer::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	Walk(DeltaTime);
+	Move(DeltaTime);
 }
 
 void APawnPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleInputMove);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleRunState);
 	}
 }
 
 void APawnPlayer::HandleInputMove(const FInputActionValue& Value) {
-
 	const FVector2D Input = Value.Get<FVector2D>();
 	InputMove = (new FVector(Input.X, Input.Y, 0.f))->GetClampedToMaxSize(1.f);
 	UE_LOG(LogTemp, Warning, TEXT("Input %s"), *InputMove.ToString());
 }
 
-void APawnPlayer::Walk(float DeltaTime) {
-	FVector DesiredVelocity = InputMove * MaxWalkSpeed;
+void APawnPlayer::Move(float DeltaTime) {
+	FVector DesiredVelocity = InputMove * MaxSpeed;
 	float MaxSpeedChange = DeltaTime * MaxAcceleration;
 
 	Velocity.X = FMath::FInterpTo(Velocity.X, DesiredVelocity.X, DeltaTime, MaxSpeedChange);
@@ -63,4 +65,9 @@ void APawnPlayer::Walk(float DeltaTime) {
 
 	FVector Displacement = Velocity * DeltaTime;
 	AddActorWorldOffset(Displacement, true);
+}
+
+void APawnPlayer::HandleRunState(const FInputActionValue& Value) {
+	const bool IsRunning = Value.Get<bool>();
+	MaxSpeed = IsRunning ? MaxRunSpeed : MaxWalkSpeed;
 }
