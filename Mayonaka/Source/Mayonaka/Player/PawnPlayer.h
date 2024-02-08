@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "PawnPlayer.generated.h"
 
+class UInputAction;
+
 UCLASS()
 class MAYONAKA_API APawnPlayer : public APawn {
 	GENERATED_BODY()
@@ -34,17 +36,20 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	class UInputMappingContext* MappingContextPlayer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	class UInputAction* MoveAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	class UInputAction* RunAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input|Movement", meta=(AllowPrivateAccess="true"))
+	UInputAction* ActionMove;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input|Movement", meta=(AllowPrivateAccess="true"))
+	UInputAction* ActionRun;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	class UInputAction* HarmonizeFireAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	class UInputAction* HarmonizeGrassAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	class UInputAction* HarmonizeWaterAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input|Combat", meta=(AllowPrivateAccess="true"))
+	UInputAction* ActionAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input|Combat", meta=(AllowPrivateAccess="true"))
+	UInputAction* ActionHarmonizeFire;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input|Combat", meta=(AllowPrivateAccess="true"))
+	UInputAction* ActionHarmonizeGrass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input|Combat", meta=(AllowPrivateAccess="true"))
+	UInputAction* ActionHarmonizeWater;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement", meta=(AllowPrivateAccess="true"))
 	float MaxWalkSpeed = 100.f;
@@ -60,6 +65,7 @@ private:
 	void HandleInputMove(const FInputActionValue& Value);
 	void HandleRunState(const FInputActionValue& Value);
 
+	void HandleAttack(const FInputActionValue& Value);
 	void HandleHarmonizeFire(const FInputActionValue& Value);
 	void HandleHarmonizeGrass(const FInputActionValue& Value);
 	void HandleHarmonizeWater(const FInputActionValue& Value);

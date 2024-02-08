@@ -44,11 +44,12 @@ void APawnPlayer::Tick(float DeltaTime) {
 void APawnPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleInputMove);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleRunState);
-		EnhancedInputComponent->BindAction(HarmonizeFireAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeFire);
-		EnhancedInputComponent->BindAction(HarmonizeGrassAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeGrass);
-		EnhancedInputComponent->BindAction(HarmonizeWaterAction, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeWater);
+		EnhancedInputComponent->BindAction(ActionMove, ETriggerEvent::Triggered, this, &APawnPlayer::HandleInputMove);
+		EnhancedInputComponent->BindAction(ActionRun, ETriggerEvent::Triggered, this, &APawnPlayer::HandleRunState);
+		EnhancedInputComponent->BindAction(ActionAttack, ETriggerEvent::Triggered, this, &APawnPlayer::HandleAttack);
+		EnhancedInputComponent->BindAction(ActionHarmonizeFire, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeFire);
+		EnhancedInputComponent->BindAction(ActionHarmonizeGrass, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeGrass);
+		EnhancedInputComponent->BindAction(ActionHarmonizeWater, ETriggerEvent::Triggered, this, &APawnPlayer::HandleHarmonizeWater);
 	}
 }
 
@@ -76,6 +77,20 @@ void APawnPlayer::HandleRunState(const FInputActionValue& Value) {
 	MaxSpeed = IsRunning ? MaxRunSpeed : MaxWalkSpeed;
 }
 
-void APawnPlayer::HandleHarmonizeFire(const FInputActionValue& Value) { Element = HarmonizedElement::Fire; UE_LOG(LogTemp, Warning, TEXT("Fire")); }
-void APawnPlayer::HandleHarmonizeGrass(const FInputActionValue& Value) { Element = HarmonizedElement::Grass; UE_LOG(LogTemp, Warning, TEXT("Grass")); }
-void APawnPlayer::HandleHarmonizeWater(const FInputActionValue& Value) { Element = HarmonizedElement::Water; UE_LOG(LogTemp, Warning, TEXT("Water")); }
+void APawnPlayer::HandleAttack(const FInputActionValue& Value) {
+	switch (Element) {
+		case HarmonizedElement::Fire:
+			UE_LOG(LogTemp, Warning, TEXT("Attack > Fire"));
+			break;
+		case HarmonizedElement::Grass:
+			UE_LOG(LogTemp, Warning, TEXT("Attack > Grass"));
+			break;
+		case HarmonizedElement::Water:
+			UE_LOG(LogTemp, Warning, TEXT("Attack > Water"));
+			break;
+	}
+}
+
+void APawnPlayer::HandleHarmonizeFire(const FInputActionValue& Value) { Element = HarmonizedElement::Fire; }
+void APawnPlayer::HandleHarmonizeGrass(const FInputActionValue& Value) { Element = HarmonizedElement::Grass; }
+void APawnPlayer::HandleHarmonizeWater(const FInputActionValue& Value) { Element = HarmonizedElement::Water; }

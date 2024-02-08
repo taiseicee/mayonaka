@@ -9,7 +9,8 @@
 		"npm.autoDetect": "off",
 		"files.associations": {
 			"*.rh": "cpp",
-			"*.ipp": "cpp"
+			"*.ipp": "cpp",
+			"ostream": "cpp"
 		}
 	},
 	"extensions": {
