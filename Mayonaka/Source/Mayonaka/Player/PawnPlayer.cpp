@@ -26,7 +26,6 @@ APawnPlayer::APawnPlayer() {
 	ProjectileSpawnPoint->SetupAttachment(Flipbook);
 	SpringArmCamera->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArmCamera);
-
 }
 
 void APawnPlayer::BeginPlay() {
